@@ -1,3 +1,5 @@
+//Gestiona el envio de mensaje del usuario y la respuesta del chatbot en el frontend
+
 jQuery(document).ready(function($) {
     $('#send-btn').on('click', function() {
         var userMessage = $('#chat-input').val().trim();
@@ -10,6 +12,8 @@ jQuery(document).ready(function($) {
         $('#chat-output').append('<p><strong>Bot:</strong> <em>Loading...</em></p>');
         $('#send-btn').attr('disabled', true);
 
+        //Envia una solicitud AJAX a la API REST de WordPress
+        //La respuesta se muestra en el contenedor #chat-output
         $.ajax({
             url: '/wp-json/ai-chatbot/v1/get-response',
             type: 'POST',
@@ -34,6 +38,7 @@ jQuery(document).ready(function($) {
         });
     });
 
+    //Función para que funcione el intro para mandar el mensaje.
     $('#chat-input').keypress(function(e) {
         if (e.which == 13) {
             $('#send-btn').click();

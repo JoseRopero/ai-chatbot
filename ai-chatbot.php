@@ -10,6 +10,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+//Incluimos 'chatbot-api.php' que contiene la funcionalidad de la API REST para conectar con OpenAI.
 require_once plugin_dir_path(__FILE__) . 'includes/chatbot-api.php';
 
 function ai_chatbot_shortcode() {
@@ -21,12 +22,15 @@ function ai_chatbot_shortcode() {
 }
 add_shortcode('ai_chatbot', 'ai_chatbot_shortcode');
 
+//Cargamos JavaScript y CSS
 function ai_chatbot_enqueue_assets() {
     wp_enqueue_script('ai-chatbot-js', plugins_url('/js/ai-chatbot.js', __FILE__), array('jquery'), '2.1', true);
     wp_enqueue_style('ai-chatbot-css', plugins_url('/css/ai-chatbot.css', __FILE__));
 }
 add_action('wp_enqueue_scripts', 'ai_chatbot_enqueue_assets');
 
+
+//Creamos una nueva página en el menú de Ajustes del panel de administración.
 function ai_chatbot_add_admin_menu() {
     add_options_page(
         'AI Chatbot Settings',
@@ -38,6 +42,7 @@ function ai_chatbot_add_admin_menu() {
 }
 add_action('admin_menu', 'ai_chatbot_add_admin_menu');
 
+//Página de configuración del Plugin
 function ai_chatbot_options_page() {
     ?>
     <div class="wrap">
@@ -53,6 +58,7 @@ function ai_chatbot_options_page() {
     <?php
 }
 
+//Inicializamos las configuraciones y los campos.
 function ai_chatbot_settings_init() {
     register_setting('ai_chatbot_options_group', 'ai_chatbot_openai_api_key', array(
         'type' => 'string',
@@ -77,6 +83,7 @@ function ai_chatbot_settings_init() {
 }
 add_action('admin_init', 'ai_chatbot_settings_init');
 
+//Campo para la API Key, si hay una Key guardada se muestra enmascarada.
 function ai_chatbot_field_api_key_cb() {
     $api_key = get_option('ai_chatbot_openai_api_key');
     ?>

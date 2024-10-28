@@ -1,4 +1,6 @@
 <?php
+
+//Definimos una ruta en la API REST de WordPress y que acepte solicitudes POST
 add_action('rest_api_init', function () {
     register_rest_route('ai-chatbot/v1', '/get-response', array(
         'methods' => 'POST',
@@ -7,9 +9,10 @@ add_action('rest_api_init', function () {
     ));
 });
 
+//Funcion de solicitud a OpenAI
 function ai_chatbot_get_response($request) {
     $params = $request->get_json_params();
-    $user_message = sanitize_text_field($params['message']);
+    $user_message = sanitize_text_field($params['message']); //Limpia el mensaje del usuario
 
     // Verificar si hay una nueva API Key
     if (isset($params['new_api_key']) && !empty($params['new_api_key'])) {
@@ -17,12 +20,14 @@ function ai_chatbot_get_response($request) {
         update_option('ai_chatbot_openai_api_key', $new_api_key);
     }
 
+    //Guardamos la Key introducida por el usuario.
     $api_key = get_option('ai_chatbot_openai_api_key');
 
     if (empty($api_key)) {
         return new WP_Error('no_api_key', 'API Key not set.', array('status' => 500));
     }
 
+    //Indicamos el modelo de IA.
     $body = json_encode(array(
         'model' => 'gpt-3.5-turbo',
         'messages' => array(
@@ -32,6 +37,7 @@ function ai_chatbot_get_response($request) {
         'temperature' => 0.5,
     ));
 
+    //Dirección API donde mandamos las solicitudes con la Key almacenada.
     $response = wp_remote_post('https://api.openai.com/v1/chat/completions', array(
         'body'    => $body,
         'headers' => array(
